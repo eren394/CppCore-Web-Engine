@@ -1,16 +1,28 @@
-# C++ Multi-Threaded Web Server
+# CppCore-Web-Engine
 
-Bu proje, Windows platformu üzerinde C++ ve Winsock kütüphanesi kullanılarak sıfırdan geliştirilmiş bir web sunucusudur. Herhangi bir hazır web framework'ü kullanılmamıştır.
+Bu proje, Windows platformu üzerinde Winsock API kullanılarak sıfırdan geliştirilmiş, yüksek performanslı ve çok iş parçacıklı (multi-threaded) bir HTTP web sunucusu motorudur. Herhangi bir dış framework kullanılmadan, düşük seviyeli ağ programlama prensipleriyle inşa edilmiştir.
 
-## Özellikler
-- **Socket Programlama:** Winsock API ile TCP/IP bağlantıları yönetimi.
-- **Multi-threading:** `std::thread` kullanılarak aynı anda birden fazla istemciye hizmet verme.
-- **Dinamik İçerik:** C++ verilerini HTML şablonlarına (`{{TABLO}}`) enjekte etme.
-- **Thread Safety:** `std::mutex` ile paylaşılan verilere güvenli erişim.
-- **File I/O:** Statik HTML dosyalarını diskten okuma ve sunma.
+##  Teknik Özellikler
 
-## Nasıl Çalıştırılır?
-1. Repoyu bilgisayarınıza indirin.
-2. `g++ src/main.cpp -o server -lws2_32` komutuyla derleyin.
-3. `server.exe` dosyasını çalıştırın.
-4. Tarayıcınızdan `localhost:8080` adresine gidin.
+- **Multi-Threaded Mimari:** `std::thread` kullanılarak her istemci bağlantısı için ayrı bir iş parçacığı oluşturulur. Bu sayede sunucu eşzamanlı olarak onlarca isteği yanıtlayabilir.
+- **Thread-Safety (Veri Güvenliği):** Paylaşılan kaynaklara (envanter verisi vb.) erişim, Race Condition riskini önlemek amacıyla `std::mutex` ve `std::lock_guard` ile koruma altına alınmıştır.
+- **Dinamik Template Engine:** Statik HTML dosyaları (`index.html`, `envanter.html`) diskten okunur ve çalışma zamanında dinamik veriler (C++ vektör içerikleri) özel işaretleyiciler (`{{TABLO}}`) aracılığıyla HTML içerisine enjekte edilir.
+- **Soket Optimizasyonu:** `SO_REUSEADDR` soket seçeneği ile sunucunun hızlıca yeniden başlatılması sağlanmış ve port çakışmaları minimize edilmiştir.
+- **Logging:** Bağlanan her istemcinin IP adresi, kullandığı Thread ID ve HTTP istek satırı terminal üzerinden gerçek zamanlı olarak izlenebilir.
+
+##  Proje Yapısı
+- `main.cpp`: Sunucu çekirdeği, thread yönetimi ve yönlendirme mantığı.
+- `index.html`: Ana sayfa şablonu.
+- `envanter.html`: Veri listeleme şablonu.
+
+##  Kurulum ve Çalıştırma
+
+1. Projeyi klonlayın:
+   ```bash
+   git clone [https://github.com/KULLANICI_ADIN/REPO_ISMIN.git](https://github.com/KULLANICI_ADIN/REPO_ISMIN.git)
+2. G++ veya MSVC ile derleyin (Winsock kütüphanesini bağlamayı unutmayın):
+   '''bash
+   -'g++ main.cpp -o server -lws2_32'
+3. Sunucuyu çalıştırın ve localhostunuza bağlanın:
+   './sunucu.exe'
+   'http://localhost:8080'
